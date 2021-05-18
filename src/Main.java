@@ -103,6 +103,51 @@ public class Main {
         System.out.println(main.countSubstrings("abc"));
 
     }
+    int[] preorder;
+    int[] inorder;
+    public TreeNode buildTree(int[] preorder, int[] inorder) {
+        if (preorder.length==0){
+            return null;
+        }
+        this.preorder=preorder;
+        this.inorder=inorder;
+        return getTree(0,preorder.length-1,0,preorder.length-1);
+    }
+    TreeNode getTree(int i1,int j1,int i2,int j2){
+        TreeNode treeNode = new TreeNode();
+        int root=preorder[i1];
+        treeNode.val=preorder[i1];
+//        情况一，只有根节点，没有左右子树
+        if(i1==j1){
+            return treeNode;
+        }
+        else {
+            int x=0;
+            for(int i=i2;i<=j2;i++){
+                if (root==inorder[i]){
+                    x=i;
+                    break;
+                }
+            }
+//            情况二，没有左子树
+            if(x==i2){
+                treeNode.right=getTree(i1+1, j1, i2+1, j2);
+            }
+//            情况三，没有右子树
+            else if(x==j2){
+                treeNode.left=getTree(i1+1, j1, i2, j2-1);
+            }
+//            情况四，左右子树都有
+            else {
+                int left=x-i2;
+                int right=j2-x;
+                treeNode.left=getTree(i1+1, i1+1+left-1, i2, x-1);
+                treeNode.right=getTree(j1-right+1, j1, x+1, j2);
+            }
+
+        }
+        return treeNode;
+    }
     public int[] reversePrint(ListNode head) {
         ListNode pre=null;
         while (head!=null){
